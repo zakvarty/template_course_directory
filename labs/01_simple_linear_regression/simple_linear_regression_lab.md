@@ -8,10 +8,7 @@ output:
     keep_md: true
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(bookdown)
-```
+
 
 
 # Simple linear regression
@@ -47,7 +44,8 @@ __Task 1.2:__ Simulate two data sets from the above model, each with $n = 150$ o
 For each data set, plot the simulated data and the overlay the true relationship between $y$ and $x$. 
 
 __Solution 1.2:__
-```{r task-12, collapse=TRUE, results='hold', fig.align='center', fig.cap="Two simulated data sets with a noisy linear relationship between explanatory and response variables."}
+
+```r
 # Set constants
 n <- 150
 b_0 <- 3.14 
@@ -87,6 +85,14 @@ plot(
   ylab = "response variable value",
   main = "Simulated data 2")
 abline(a = b_0, b = b_1, col = "blue", lwd = 2)
+```
+
+<div class="figure" style="text-align: center">
+<img src="simple_linear_regression_lab_files/figure-html/task-12-1.png" alt="Two simulated data sets with a noisy linear relationship between explanatory and response variables."  />
+<p class="caption">(\#fig:task-12)Two simulated data sets with a noisy linear relationship between explanatory and response variables.</p>
+</div>
+
+```r
 par(mfrow = c(1,1))
 ```
 
@@ -102,14 +108,19 @@ __Solution 1.3:__ By re-running the previous code, altering the values of $b_0$,
 __Task 1.4:__ Use the `lm()` function to estimate the linear relationship between $y$ and $x$ using one of your simulated data sets. Create a plot of the simulated data, fitted and true relationship. You may find the documentation for `lm()` useful, open this by running `help(lm)`. Repeat with the other data set. 
 
 __Solution 1.4:__
-```{r solution-14, collapse=TRUE, fig.align='center', fig.cap='True (blue) and fitted (orange) linear relationships between explanatory and response variables for for two simulated data sets.'}
+
+```r
 # Fit a linear model to each simulated data set
 lm_1 <- lm(y_1 ~ x_1)
 lm_2 <- lm(y_2 ~ x_2)
 
 # Examine the fitted model parameters
 coefficients(lm_1)
+## (Intercept)         x_1 
+##    3.254496   -1.973355
 coefficients(lm_2)
+## (Intercept)         x_2 
+##    3.251143   -2.006149
 
 # Plot both data sets
 par(mfrow = c(1,2))
@@ -134,6 +145,14 @@ plot(
   col = "lightgrey")
 abline(a = b_0, b = b_1, lwd = 2, col = "blue")
 abline(lm_2, col = "orange", lwd = 2)
+```
+
+<div class="figure" style="text-align: center">
+<img src="simple_linear_regression_lab_files/figure-html/solution-14-1.png" alt="True (blue) and fitted (orange) linear relationships between explanatory and response variables for for two simulated data sets."  />
+<p class="caption">(\#fig:solution-14)True (blue) and fitted (orange) linear relationships between explanatory and response variables for for two simulated data sets.</p>
+</div>
+
+```r
 par(mfrow = c(1,1))
 ```
 
@@ -187,7 +206,8 @@ We have therefore identified a unique stationary point for the loss function.
 
 We can confirm that this matches the `lm()` output by calculating these parameter estimates for our two simulated data sets.
 
-```{r solution-23-check, collapse=TRUE}
+
+```r
 # Function to calculate parameters estimates exactly
 get_algebraic_least_squares_estimator <- function(x,y){
   n <- length(x)
@@ -199,11 +219,17 @@ get_algebraic_least_squares_estimator <- function(x,y){
 
 # Check lm against algebra for data set 1
 get_algebraic_least_squares_estimator(x_1, y_1)
+## [1]  3.254496 -1.973355
 coefficients(lm_1)
+## (Intercept)         x_1 
+##    3.254496   -1.973355
 
 # Check lm against algebra for data set 2
 get_algebraic_least_squares_estimator(x_2, y_2)
+## [1]  3.251143 -2.006149
 coefficients(lm_2)
+## (Intercept)         x_2 
+##    3.251143   -2.006149
 ```
 
 
@@ -245,7 +271,8 @@ $$ \beta_\text{new} = \beta_{\text{current}} - h \nabla L.$$
 ## Implementing gradient descent
 __Task 3.1:__ Implement gradient descent to obtain regression coefficients $\hat \beta$ using your simulated data. Make sure to record the coefficient values at the loss function value at each iteration. 
 
-```{r}
+
+```r
 gradient_descent <- function(func, grad, init, h, n_steps = 50, ...){
   
   out <- as.data.frame(
@@ -294,7 +321,8 @@ opt <- gradient_descent(
 __Task 3.2:__ Plot the coefficient and loss function values at each iteration. How can you identify if we have converged to a local optimum? That it is a local minimum? That it is a global optimum? 
 
 
-```{r plotting-32, collapse= TRUE, results='hold', fig.align='center', fig.cap="Sqaured error loss, beta_0 and beta_1 values at each iteration of gradient descent. Red lines show values for model fitted using lm()."}
+
+```r
 opar <- par()
 par(mfrow = c(1,3), mar = c(5.1,5.1,2.1,1.1))
 
@@ -329,6 +357,11 @@ plot(
 abline(h = lm_1$coefficients[2], col = 2, lwd = 1.5)
 ```
 
+<div class="figure" style="text-align: center">
+<img src="simple_linear_regression_lab_files/figure-html/plotting-32-1.png" alt="Sqaured error loss, beta_0 and beta_1 values at each iteration of gradient descent. Red lines show values for model fitted using lm()."  />
+<p class="caption">(\#fig:plotting-32)Sqaured error loss, beta_0 and beta_1 values at each iteration of gradient descent. Red lines show values for model fitted using lm().</p>
+</div>
+
 
 We can tell that the gradient descent optimisation has converged to a local minimum because the values of $L$, $\beta_0$ and $\beta_1$ have all stablised. Without reference to our previous algebra we can not say for certain that this is a global minimum. To increase our confidence in this we might check that the parameters we find are not sensitive to our choice of starting parameters and the scale of our step sizes.
 
@@ -337,7 +370,8 @@ __Task 3.3:__ Create a plot showing how the gradient descent algorithm moves aro
 
 __Solution 3.3:__
 
-```{r solution-33, warning=FALSE}
+
+```r
 # Evaluate the loss function on a grid
 beta_0_seq <- seq(2.5,3.5, length = 101)
 beta_1_seq <- seq(-2.1,-1.5, length = 101)
@@ -362,6 +396,8 @@ arrows(x0 = opt$beta_0[-50],
        y1 = opt$beta_1[-1],col = 2)
 ```
 
+![](simple_linear_regression_lab_files/figure-html/solution-33-1.png)<!-- -->
+
 Gradient descent takes large steps when far away from the mode, where the gradient of the loss function is high (where contours are tightly spaced). As it approaches a local mode the gradient and therefore the step sizes become smaller. 
 
 __Task 3.4:__ Create a plot showing the current regression line at every $m$ iterations (appropriate values for $m$ will depend on your choice of $h$).  
@@ -377,7 +413,8 @@ __Task 4.1:__ Simulate 1000 data sets with the same structure as in task 1.4, an
 
 __Solution 4.1:__
 
-```{r solution-41, fig.align='center', fig.cap="Estimated regression coefficients based on 1000 simulated data sets of size n = 150. True values are indicated by red dot."}
+
+```r
 n_simulations <- 1000
 estimated_coefficients <- data.frame(
   beta_0 = rep(NA, n_simulations),
@@ -403,12 +440,18 @@ plot(
 points(x = b_0, y = b_1, pch = 16, col = 2, cex = 1.5)
 ```
 
+<div class="figure" style="text-align: center">
+<img src="simple_linear_regression_lab_files/figure-html/solution-41-1.png" alt="Estimated regression coefficients based on 1000 simulated data sets of size n = 150. True values are indicated by red dot."  />
+<p class="caption">(\#fig:solution-41)Estimated regression coefficients based on 1000 simulated data sets of size n = 150. True values are indicated by red dot.</p>
+</div>
+
 
 __Task 4.2:__ Repeat Task 4.1 but simulating 1500 points in each data set. How and why does this alter the set of 1000 estimated coefficients?
 
 __Solution 4.2:__ 
 
-```{r solution-42, fig.align='center', fig.cap="Estimated regression coefficients based on 1000 simulated data sets of size n = 1500. True values are indicated by red dot."}
+
+```r
 n_simulations <- 1000
 estimated_coefficients <- data.frame(
   beta_0 = rep(NA, n_simulations),
@@ -434,6 +477,11 @@ plot(
 points(x = b_0, y = b_1, pch = 16, col = 2, cex = 1.5)
 ```
 
+<div class="figure" style="text-align: center">
+<img src="simple_linear_regression_lab_files/figure-html/solution-42-1.png" alt="Estimated regression coefficients based on 1000 simulated data sets of size n = 1500. True values are indicated by red dot."  />
+<p class="caption">(\#fig:solution-42)Estimated regression coefficients based on 1000 simulated data sets of size n = 1500. True values are indicated by red dot.</p>
+</div>
+
 The estimated coefficients are centered on the true values both for the small sample of 150 observations and the larger sample of 1500 observations. When using a particular data set to estimate the linear relationship, the parameters might be slightly over- or under-estimated. This sampling variability in the estimated coefficients is reduced when using a larger sample size.
 
 This increase in the stability of the estimated model parameters is because in a larger data set each data point makes a smaller contribution to the overall fitted model. This means that a few observations that have unusually large or small values do not effect the parameter estimates by as much. Another view on this is that the additional data conveys extra information about the model parameters, increasing the certainty with which we can estimate them. 
@@ -448,7 +496,8 @@ Let $\hat \beta_0$ and $\text{SE}(\hat\beta_0)$ denote the least squares estimat
 $$ \hat \beta_0 \pm z_{1- \alpha/2} \times\text{SE}(\hat\beta_0),$$
 where $z_{1- \alpha/2}$ is the ${1- \alpha/2}$ quantile of the standard normal distribution. We construct and plot such an interval for each of 100 simulated data sets:
 
-```{r confidence-interval-sim}
+
+```r
 n_simulations <- 100
 intercepts <- rep(NA, n_simulations)
 CIs_lower <- rep(NA, n_simulations)
@@ -470,7 +519,13 @@ for (i in 1:n_simulations) {
 # Count the number covering the true value
 is_covering_true_value <- b_0 > CIs_lower & b_0 < CIs_upper
 sum(is_covering_true_value)
+```
 
+```
+## [1] 96
+```
+
+```r
 # Plot each point estimate and confidence interval
 plot(
   x = seq_along(intercepts),
@@ -492,5 +547,7 @@ segments(
 abline(h = b_0, col = "blue", lwd = 2)
 ```
 
+![](simple_linear_regression_lab_files/figure-html/confidence-interval-sim-1.png)<!-- -->
 
-Over the 100 data sets `r sum(is_covering_true_value)` of the confidence intervals are covering the true value of $b_0$. For an individual data set the calculated confidence interval might or might not contain the true intercept. However, (assuming the specified model is correct) when confidence intervals are repeatedly calculated using independent data sets, their stated confidence level gives the long-run proportion of intervals which cover the true parameter value.
+
+Over the 100 data sets 96 of the confidence intervals are covering the true value of $b_0$. For an individual data set the calculated confidence interval might or might not contain the true intercept. However, (assuming the specified model is correct) when confidence intervals are repeatedly calculated using independent data sets, their stated confidence level gives the long-run proportion of intervals which cover the true parameter value.
