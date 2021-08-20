@@ -24,9 +24,14 @@ We do not expect this relationship to hold exactly for any particular predictor-
   (\#eq:simpleLinearRegression)
 \end{equation}
 
+***
+
 __Task 1.1:__ Name and interpret each term in equation \@ref(eq:simpleLinearRegression). 
 
-__Solution 1.2:__
+__Solution 1.1:__
+
+<details><summary>Show answer</summary>
+
  - $y_i$ is the response variable value for the $i^{\text{th}}$ observation,. Taken as a whole, $y$ is often referred to as the target variable in a machine learning context. 
 
  - $x_i$ is the explanatory variable value for the $i^\text{th}$ observation. This is often referred to as a feature or predictor variable in machine learning contexts or as a covariate in statistical contexts (because it varies along with the quantity we are trying to model). 
@@ -36,7 +41,9 @@ __Solution 1.2:__
  - $b_1$ is the expected increase in the response variable $y$ per unit increase in the explanatory variable $x$. This is known as the gradient or slope. 
 
 - $\epsilon_i$ is the error of observation $i$. This is difference between the observed value of $y_i$ and the value we would predict if the coefficients $b_0$ and $b_1$ were known. This represents additional variation in $y_i$ that is not described by the predictor variable, for example from an unmeasured predictor or limitations in the measurement process. 
+</details>
 
+***
 
 __Task 1.2:__ Simulate two data sets from the above model, each with $n = 150$ observed predictor-response pairs. In your simulation: 
 
@@ -47,6 +54,9 @@ __Task 1.2:__ Simulate two data sets from the above model, each with $n = 150$ o
 For each data set, plot the simulated data and the overlay the true relationship between $y$ and $x$. 
 
 __Solution 1.2:__
+
+<details><summary>Show answer</summary>
+
 ```{r task-12, collapse=TRUE, results='hold', fig.align='center', fig.cap="Two simulated data sets with a noisy linear relationship between explanatory and response variables."}
 # Set constants
 n <- 150
@@ -89,19 +99,27 @@ plot(
 abline(a = b_0, b = b_1, col = "blue", lwd = 2)
 par(mfrow = c(1,1))
 ```
+</details>
 
+***
 
 __Task 1.3:__ Investigate how changing the values of $b_0$, $b_1$ and $\sigma^2$ alter these plots. How does this correspond to your answer in Task 1.1? 
 
-__Solution 1.3:__ By re-running the previous code, altering the values of $b_0$, $b_1$ and $\sigma^2$ we find that: 
+__Solution 1.3:__ 
+<details><summary>Show answer</summary>
+By re-running the previous code, altering the values of $b_0$, $b_1$ and $\sigma^2$ we find that:
 
   - $b_0$ controls the expected level of $y$ when $x = 0$. 
   - $b_1$ controls the magnitude and direction of the relationship between $x$ and $y$.
   - $\sigma^2$ controls  the level of noise in the simulated data about the true relationship, where larger values correspond to greater variablility. 
+</details>
+
+***
 
 __Task 1.4:__ Use the `lm()` function to estimate the linear relationship between $y$ and $x$ using one of your simulated data sets. Create a plot of the simulated data, fitted and true relationship. You may find the documentation for `lm()` useful, open this by running `help(lm)`. Repeat with the other data set. 
 
 __Solution 1.4:__
+<details><summary>Show answer</summary>
 ```{r solution-14, collapse=TRUE, fig.align='center', fig.cap='True (blue) and fitted (orange) linear relationships between explanatory and response variables for for two simulated data sets.'}
 # Fit a linear model to each simulated data set
 lm_1 <- lm(y_1 ~ x_1)
@@ -136,6 +154,9 @@ abline(a = b_0, b = b_1, lwd = 2, col = "blue")
 abline(lm_2, col = "orange", lwd = 2)
 par(mfrow = c(1,1))
 ```
+</details>
+
+***
 
 # Verifying `lm()` output analytically
 
@@ -153,9 +174,12 @@ L(\beta_0, \beta_1) = \sum_{i=1}^n (y_i - \beta_0 - \beta_1 x_i)^2.
 
 Unlike more flexible supervised learning models, for linear regression the model coefficients that minimise the loss function \@ref(eq:least-squares-loss-function) can be calculated exactly and directly through the use of calculus. 
 
+***
+
 __Task 2.1:__ By using partial differentiation and solving a system of simultaneous equations, obtain a closed form for the regression coefficients $\hat \beta_0$ and $\hat \beta_1$ in terms of the observed $x$ and $y$ values. You should confirm that these correspond to a local minimum of the squared error loss function and are equal to the values returned by `lm()`. 
 
 __Solution 2.1:__
+<details><summary>Show answer</summary>
 We wish to find the values $\hat \beta_0$ and $\hat \beta_1$ that minimise the squared error loss function $L(\beta_0, \beta_1)$. To do this, we find the first-order partial derivatives of $L$ with respect to each coefficient: 
 
 $$
@@ -230,11 +254,14 @@ We can show that this stationary point is a minimum (rather than a maximum or sa
 \end{align*}
 
 From this it is evident that for any data set $\frac{\partial^2 L}{d\beta_0^2} = 2n > 0$ and, if not all $x$ values are equal, we also have that $\det \mathbf{H}_L(\hat \beta) > 0$. Therefore, by the the second partial derivative test, the stationary point we have identified is the global minimiser of the squared-error loss function.  
+</details>
+
+***
 
 # Verifying `lm()` output using numerical methods 
 
 ## Introducing gradient descent
-In more complicated supervised learning models, it will not always be possible to analytically minimise the loss function. For these models numerical optimisation routines will be required. Here we introduce one such technique, __gradient descent__. While gradient descent is not required to fit a linear regression model, we develop the idea here to build our intuition and to confirm that the method converges to the analytic solution. 
+In more complicated supervised learning models, it will not always be possible to analytically minimise the loss function. For these models numerical optimisation routines will be required. Here we introduce one such technique, __gradient descent__. While gradient descent is not required to fit a linear regression model, we develop the idea here to build our intuition and to confirm that the method converges to the analytic solution.
 
 We previously fit a linear regression model by minimising the loss function analytically. This was achieved by determining the point at which the gradient of the loss function $\nabla L = \left (\frac{\partial{L}}{\partial{\beta_0}}, \frac{\partial{L}}{\partial{\beta_1}} \right) = (0,0)$. 
 
@@ -243,8 +270,11 @@ The gradient of the loss function is the direction in $(\beta_0, \beta_1)$ space
 $$ \beta_\text{new} = \beta_{\text{current}} - h \nabla L.$$
 
 ## Implementing gradient descent
+
 __Task 3.1:__ Implement gradient descent to obtain regression coefficients $\hat \beta$ using your simulated data. Make sure to record the coefficient values at the loss function value at each iteration. 
 
+__Solution 3.1:__
+<details><summary>Show answer</summary>
 ```{r}
 gradient_descent <- function(func, grad, init, h, n_steps = 50, ...){
   
@@ -288,12 +318,17 @@ opt <- gradient_descent(
   n_steps = 50,
   x = x_1,
   y = y_1)
-```
 
+tail(opt)
+```
+</details>
+
+*** 
 
 __Task 3.2:__ Plot the coefficient and loss function values at each iteration. How can you identify if we have converged to a local optimum? That it is a local minimum? That it is a global optimum? 
 
-
+__Solution 3.2:__
+<details><summary>Show answer</summary>
 ```{r plotting-32, collapse= TRUE, results='hold', fig.align='center', fig.cap="Sqaured error loss, beta_0 and beta_1 values at each iteration of gradient descent. Red lines show values for model fitted using lm()."}
 opar <- par()
 par(mfrow = c(1,3), mar = c(5.1,5.1,2.1,1.1))
@@ -331,12 +366,14 @@ abline(h = lm_1$coefficients[2], col = 2, lwd = 1.5)
 
 
 We can tell that the gradient descent optimisation has converged to a local minimum because the values of $L$, $\beta_0$ and $\beta_1$ have all stablised. Without reference to our previous algebra we can not say for certain that this is a global minimum. To increase our confidence in this we might check that the parameters we find are not sensitive to our choice of starting parameters and the scale of our step sizes.
+</details>
 
+***
 
 __Task 3.3:__ Create a plot showing how the gradient descent algorithm moves around the $(\beta_0, \beta_1)$ parameter space over iterations. Bonus: add the contours of the loss function to this plot.
 
 __Solution 3.3:__
-
+<details><summary>Show answer</summary>
 ```{r solution-33, warning=FALSE}
 # Evaluate the loss function on a grid
 beta_0_seq <- seq(2.5,3.5, length = 101)
@@ -362,21 +399,27 @@ arrows(x0 = opt$beta_0[-50],
        y1 = opt$beta_1[-1],col = 2)
 ```
 
-Gradient descent takes large steps when far away from the mode, where the gradient of the loss function is high (where contours are tightly spaced). As it approaches a local mode the gradient and therefore the step sizes become smaller. 
+Gradient descent takes large steps where the gradient of the loss function is high (where contours are tightly spaced). As it approaches a local mode the gradient and therefore the step sizes become smaller. 
+</details>
+
+***
 
 __Task 3.4:__ Create a plot showing the current regression line at every $m$ iterations (appropriate values for $m$ will depend on your choice of $h$).  
 
 $\texttt{Keep?}$
 
+***
  
 # 4: Understanding sampling variability
 
 We saw in task 1.4 that the regression coefficients that we obtain depend on the data that are used to estimate them. Here we try to quantify that variability. 
 
+*** 
+
 __Task 4.1:__ Simulate 1000 data sets with the same structure as in task 1.4, and use `lm()` to fit a simple linear regression to each. Extract and plot the estimated coefficients for each model. 
 
 __Solution 4.1:__
-
+<details><summary>Show answer</summary>
 ```{r solution-41, fig.align='center', fig.cap="Estimated regression coefficients based on 1000 simulated data sets of size n = 150. True values are indicated by red dot."}
 n_simulations <- 1000
 estimated_coefficients <- data.frame(
@@ -402,12 +445,14 @@ plot(
 )
 points(x = b_0, y = b_1, pch = 16, col = 2, cex = 1.5)
 ```
+</details>
 
+***
 
 __Task 4.2:__ Repeat Task 4.1 but simulating 1500 points in each data set. How and why does this alter the set of 1000 estimated coefficients?
 
 __Solution 4.2:__ 
-
+<details><summary>Show answer</summary>
 ```{r solution-42, fig.align='center', fig.cap="Estimated regression coefficients based on 1000 simulated data sets of size n = 1500. True values are indicated by red dot."}
 n_simulations <- 1000
 estimated_coefficients <- data.frame(
@@ -437,12 +482,17 @@ points(x = b_0, y = b_1, pch = 16, col = 2, cex = 1.5)
 The estimated coefficients are centered on the true values both for the small sample of 150 observations and the larger sample of 1500 observations. When using a particular data set to estimate the linear relationship, the parameters might be slightly over- or under-estimated. This sampling variability in the estimated coefficients is reduced when using a larger sample size.
 
 This increase in the stability of the estimated model parameters is because in a larger data set each data point makes a smaller contribution to the overall fitted model. This means that a few observations that have unusually large or small values do not effect the parameter estimates by as much. Another view on this is that the additional data conveys extra information about the model parameters, increasing the certainty with which we can estimate them. 
+</details>
+
+***
 
 __Task 4.3:__ The sampling variability of the estimated model coefficients can be represented by their standard errors. For each of 100 simulated data sets, construct approximate 95% confidence intervals for $b_0$ using the estimated coefficients and standard errors. 
 
 How many of these intervals cover the true value $b_0$? How does this link to the definition of a confidence interval?
 
 __Solution 4.3:__ 
+<details><summary>Show answer</summary>
+
 Let $\hat \beta_0$ and $\text{SE}(\hat\beta_0)$ denote the least squares estimate of the intercept $b_0$ and its associated standard error. An approximate $100(1-\alpha)\%$ confidence interval for $b_0$ is given by: 
 
 $$ \hat \beta_0 \pm z_{1- \alpha/2} \times\text{SE}(\hat\beta_0),$$
@@ -494,3 +544,10 @@ abline(h = b_0, col = "blue", lwd = 2)
 
 
 Over the 100 data sets `r sum(is_covering_true_value)` of the confidence intervals are covering the true value of $b_0$. For an individual data set the calculated confidence interval might or might not contain the true intercept. However, (assuming the specified model is correct) when confidence intervals are repeatedly calculated using independent data sets, their stated confidence level gives the long-run proportion of intervals which cover the true parameter value.
+</details>
+
+*** 
+`Other topics to add: what happens when the data does not truly come from a linear model?`
+
+***
+***
