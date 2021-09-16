@@ -1,3 +1,8 @@
+
+###########################
+# R Things
+###########################
+
 # History files
 .Rhistory
 .Rapp.history
@@ -37,6 +42,17 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+
+#############################
+# LaTeX Things (tbc)
+#############################
+
+
+
+#############################
+# Mac Things
+#############################
 
 # Mac folder files
 .DS_Store
